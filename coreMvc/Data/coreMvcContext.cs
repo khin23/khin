@@ -14,5 +14,8 @@ namespace coreMvc.Models
         }
 
         public DbSet<coreMvc.Models.Movies> Movies { get; set; }
+
+        //public DbSet<coreMvc.Models.PageEntity> PageEntity { get; set; }
+        //public DbSet<coreMvc.Models.Pagination> Pagination { get; set; }
     }
 }

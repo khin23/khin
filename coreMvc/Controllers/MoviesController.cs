@@ -19,8 +19,19 @@ namespace coreMvc.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index(string movieGenre, string searchString)
+        public async Task<IActionResult> Index(string movieGenre, string searchString, int? page)
         {
+           
+            //ViewData["CurrentSort"] = sortOrder;
+            /* if (searchString != null)
+             {
+                 page = 1;
+             }
+             else
+             {
+                 searchString = currentFilter;
+             }
+             ViewData["CurrentFilter"] = searchString;*/
 
             IQueryable<string> genreQuery = from m in _context.Movies
                                             orderby m.Genre
@@ -28,23 +39,32 @@ namespace coreMvc.Controllers
 
             var movies = from m in _context.Movies
                          select m;
-          
+
 
             if (!String.IsNullOrEmpty(searchString))
             {
                 movies = movies.Where(s => s.Title.Contains(searchString));
+                
+                // movies = movies.Where(s => s.Genre.Contains(searchString));
             }
 
             if (!String.IsNullOrEmpty(movieGenre))
             {
                 movies = movies.Where(x => x.Genre == movieGenre);
+                
             }
             var movieGenreVM = new MovieGenreViewModel();
             movieGenreVM.genres = new SelectList(await genreQuery.Distinct().ToListAsync());
             movieGenreVM.movies = await movies.ToListAsync();
 
-            return View(movieGenreVM);
+
+            int pageSize = 3;
+            return View(await PaginatedList<Movies>.CreateAsync(movies.AsNoTracking(), page ?? 1, pageSize));
+           
+            
         }
+
+       
 
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)

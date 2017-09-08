@@ -11,9 +11,10 @@ using System;
 namespace coreMvc.Migrations
 {
     [DbContext(typeof(coreMvcContext))]
-    partial class coreMvcContextModelSnapshot : ModelSnapshot
+    [Migration("20170908074837_InitialCreate6")]
+    partial class InitialCreate6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
