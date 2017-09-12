@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using coreMvc.Models;
+using ReflectionIT.Mvc.Paging;
+using Microsoft.AspNetCore.Routing;
 
 namespace coreMvc.Controllers
 {
@@ -19,7 +21,7 @@ namespace coreMvc.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index(string movieGenre, string searchString, int? page)
+        public async Task<IActionResult> Index(string movieGenre, string SelectList, string SearchString , int page = 1 )
         {
            
             //ViewData["CurrentSort"] = sortOrder;
@@ -41,11 +43,13 @@ namespace coreMvc.Controllers
                          select m;
 
 
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                movies = movies.Where(s => s.Title.Contains(searchString));
+            if (!String.IsNullOrEmpty(SearchString))
+               
+                {
+                 //SearchString = null;
+                movies = movies.Where(s => s.Title.Contains(SearchString));
                 
-                // movies = movies.Where(s => s.Genre.Contains(searchString));
+               
             }
 
             if (!String.IsNullOrEmpty(movieGenre))
@@ -53,18 +57,42 @@ namespace coreMvc.Controllers
                 movies = movies.Where(x => x.Genre == movieGenre);
                 
             }
+
+            var qry =movies.AsNoTracking().OrderBy(p => p.Title);
+            var model = await PagingList<Movies>.CreateAsync(qry, 2, page);
+
+            model.RouteValue = new RouteValueDictionary { { "movieGenre", movieGenre } };
             var movieGenreVM = new MovieGenreViewModel();
-            movieGenreVM.genres = new SelectList(await genreQuery.Distinct().ToListAsync());
-            movieGenreVM.movies = await movies.ToListAsync();
+            movieGenreVM.Genres = new SelectList(await genreQuery.Distinct().ToListAsync());
+            movieGenreVM.movies = model;
 
 
-            int pageSize = 3;
-            return View(await PaginatedList<Movies>.CreateAsync(movies.AsNoTracking(), page ?? 1, pageSize));
-           
-            
+            return View(movieGenreVM);
+                     
         }
 
-       
+        //public ActionResult IndexViewModel()
+        //{
+        //   // ViewBag.Message = "Welcome to my demo!";
+        //    ViewModel mymodel = new ViewModel();
+        //    mymodel.movies = getMovies();
+        //    mymodel.genres = getGenres();
+        //    return View(mymodel);
+        //}
+
+        //private IEnumerable<MovieGenreViewModel> getGenres()
+        //{
+        //    throw new NotImplementedException();           
+        //}
+
+        //private IEnumerable<Movies> getMovies()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
+
+
 
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)

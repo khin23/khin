@@ -1,5 +1,8 @@
 ﻿
-@model PaginatedList<coreMvc.Models.Movies>
+@*@model coreMvc.PaginatedList<coreMvc.Models.MovieGenreViewModel>*@
+@model coreMvc.Models.MovieGenreViewModel
+@*@model ReflectionIT.Mvc.Paging.PagingList<coreMvc.Models.MovieGenreViewModel>*@
+
 
 
 
@@ -14,8 +17,8 @@
 </p>
 <form asp-controller="Movies" asp-action="Index" method="get">
     <p>
-
-        <select asp-for="movieGenre" asp-items="Models.genres">
+       
+  <select asp-for="movieGenre" asp-items="Model.Genres">
             <option value="">Genre</option>
         </select>
         @*Title: <input type="text" name="SearchString" placeholder="Search by Title">*@
@@ -49,10 +52,10 @@
     </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.movies) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem =>item.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ReleaseDate)
@@ -75,8 +78,8 @@
 }
     </tbody>
 </table>
-@{
-    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-}
+<nav aria-label="Movies navigation example">
+    <vc:pager paging-list="@Model.movies " />
+</nav>
+
 

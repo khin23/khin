@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using coreMvc.Data;
 using coreMvc.Models;
 using coreMvc.Services;
+using ReflectionIT.Mvc.Paging;
 
 namespace coreMvc
 {
@@ -40,6 +41,10 @@ namespace coreMvc
 
             services.AddDbContext<coreMvcContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddMvc();
+
+            services.AddPaging();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
